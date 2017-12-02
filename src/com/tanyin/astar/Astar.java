@@ -3,7 +3,6 @@ package com.tanyin.astar;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * Created by tanyin on 2017/11/25.
@@ -15,29 +14,29 @@ public class Astar {
 
     ArrayList<Step> openList = new ArrayList<>();
     ArrayList<Step> closeList = new ArrayList<>();
-    private int destX;
-    private int destY;
+    private int destColumn;
+    private int destRow;
     private Step finalStep;
 
     public Astar(MapInfo map) {
         this.map = map;
     }
 
-    public ArrayList<Step> findTheWay(int srcX, int srcY, int destX, int destY) {
+    public ArrayList<Step> findTheWay(int srcColumn, int srcRow, int destColumn, int destRow) {
 
-        this.destX = destX;
-        this.destY = destY;
+        this.destColumn = destColumn;
+        this.destRow = destRow;
 
-        openList.add(new Step(Step.ROOT, Step.ROOT, srcX, srcY, getH(srcX, srcY, destX, destY), 0));
+        openList.add(new Step(Step.ROOT, Step.ROOT, srcColumn, srcRow, getH(srcColumn, srcRow, destColumn, srcRow), 0));
         while (openList.size() > 0) {
             sortOpenList();
             Step s = openList.get(0);
 
 
-            if (handlePosition(s, s.getX() - 1, s.getY())) return getSteps();
-            if (handlePosition(s, s.getX() + 1, s.getY())) return getSteps();
-            if (handlePosition(s, s.getX(), s.getY() - 1)) return getSteps();
-            if (handlePosition(s, s.getX(), s.getY() + 1)) return getSteps();
+            if (handlePosition(s, s.getColumn() - 1, s.getRow())) return getSteps();
+            if (handlePosition(s, s.getColumn() + 1, s.getRow())) return getSteps();
+            if (handlePosition(s, s.getColumn(), s.getRow() - 1)) return getSteps();
+            if (handlePosition(s, s.getColumn(), s.getRow() + 1)) return getSteps();
 
             openList.remove(s);
             closeList.add(s);
@@ -50,14 +49,14 @@ public class Astar {
 
         mSteps.add(finalStep);
         while (true) {
-            if (mSteps.get(0).getParentX() == Step.ROOT) break;
+            if (mSteps.get(0).getParentColumn() == Step.ROOT) break;
             for (Step s : closeList) {
-                if ((s.getX() == mSteps.get(0).getParentX()) && (s.getY() == mSteps.get(0).getParentY())) {
+                if ((s.getColumn() == mSteps.get(0).getParentColumn()) && (s.getRow() == mSteps.get(0).getParentRow())) {
                     mSteps.add(0, s);
                 }
             }
             for (Step s : openList) {
-                if ((s.getX() == mSteps.get(0).getParentX()) && (s.getY() == mSteps.get(0).getParentY())) {
+                if ((s.getColumn() == mSteps.get(0).getParentColumn()) && (s.getRow() == mSteps.get(0).getParentRow())) {
                     mSteps.add(0, s);
                 }
             }
@@ -71,40 +70,40 @@ public class Astar {
         return mSteps;
     }
 
-    private boolean handlePosition(Step s, int x, int y) {
-        if ((x == destX) && (y == destY)) {
-            finalStep = new Step(s.getX(), s.getY(), x, y, getH(x, y, destX, destY), s.getG() + 1);
+    private boolean handlePosition(Step s, int column, int row) {
+        if ((column == destColumn) && (row == destRow)) {
+            finalStep = new Step(s.getColumn(), s.getRow(), column, row, getH(column, row, destColumn, destRow), s.getG() + 1);
             return true;
         }
 
-        if (!map.isPositionValid(x, y)) return false;
+        if (!map.isPositionValid(column, row)) return false;
 
-        if (isPositionInList(x, y, closeList)) return false;
-        if (isPositionInList(x, y, openList)) {
-            updatePositionInOpenList(x, y, s);
+        if (isPositionInList(column, row, closeList)) return false;
+        if (isPositionInList(column, row, openList)) {
+            updatePositionInOpenList(column, row, s);
             return false;
         }
 
-        openList.add(new Step(s.getX(), s.getY(), x, y, getH(x, y, destX, destY), s.getG() + 1));
+        openList.add(new Step(s.getColumn(), s.getRow(), column, row, getH(column, row, destColumn, destRow), s.getG() + 1));
         return false;
     }
 
-    private void updatePositionInOpenList(int x, int y, Step currentStep) {
+    private void updatePositionInOpenList(int column, int row, Step currentStep) {
         for (Step s : openList) {
-            if ((s.getX() == x) && (s.getY() == y)) {
+            if ((s.getColumn() == column) && (s.getRow() == row)) {
                 if (s.getG() > currentStep.getG() + 1) {
                     s.setG(currentStep.getG() + 1);
-                    s.setParentX(currentStep.getParentX());
-                    s.setParentY(currentStep.getParentY());
+                    s.setParentColumn(currentStep.getParentColumn());
+                    s.setParentRow(currentStep.getParentRow());
                     return;
                 }
             }
         }
     }
 
-    private boolean isPositionInList(int x, int y, ArrayList<Step> closeList) {
+    private boolean isPositionInList(int column, int row, ArrayList<Step> closeList) {
         for (Step s : closeList) {
-            if ((s.getX() == x) && (s.getY() == y)) return true;
+            if ((s.getColumn() == column) && (s.getRow() == row)) return true;
         }
         return false;
     }
@@ -118,8 +117,8 @@ public class Astar {
         });
     }
 
-    private int getH(int srcX, int srcY, int destX, int destY) {
-        return Math.abs(srcX - destX) + Math.abs(srcY - destY);
+    private int getH(int srcColumn, int srcRow, int destColumn, int destRow) {
+        return Math.abs(srcColumn - destColumn) + Math.abs(srcRow - destRow);
     }
 
 }

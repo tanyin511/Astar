@@ -7,40 +7,40 @@ import java.util.ArrayList;
  */
 public class Main {
 
-    final static int SX = 2;
-    final static int SY = 3;
-    final static int DX = 5;
-    final static int DY = 4;
+    final static int SRC_COLUMN = 2;
+    final static int SRC_ROW = 3;
+    final static int DEST_COLUMN = 5;
+    final static int DEST_ROW = 4;
 
     public static void main(String[] args) {
         System.out.println("hello test is run~~");
 
         Astar mAstar = new Astar(new MapInfo());
 
-        ArrayList<Step> mSteps = mAstar.findTheWay(SX, SY, DX, DY);
+        ArrayList<Step> mSteps = mAstar.findTheWay(SRC_COLUMN, SRC_ROW, DEST_COLUMN, DEST_ROW);
         System.out.println("return~~");
         showTheWay(mSteps);
     }
 
     private static void showTheWay(ArrayList<Step> mSteps) {
-        int[][] map = new int[MapInfo.ROW][MapInfo.COLUMN];
+        int[][] map = new int[MapInfo.ROW_SIZE][MapInfo.COLUMN_SIZE];
 
-        for (int i = 0; i < MapInfo.ROW; i++) {
-            for (int j = 0; j < MapInfo.COLUMN; j++) {
+        for (int i = 0; i < MapInfo.ROW_SIZE; i++) {
+            for (int j = 0; j < MapInfo.COLUMN_SIZE; j++) {
                 map[i][j] = MapInfo.map[i][j];
             }
         }
 
         for (Step s : mSteps) {
-            map[s.getY()][s.getX()] = 0;
+            map[s.getRow()][s.getColumn()] = 0;
         }
-        map[SY][SX] = 8;
-        map[DY][DX] = 9;
+        map[SRC_ROW][SRC_COLUMN] = 8;
+        map[DEST_ROW][DEST_COLUMN] = 9;
 
 
-        for (int i = 0; i < MapInfo.ROW; i++) {
+        for (int i = 0; i < MapInfo.ROW_SIZE; i++) {
             String s = "";
-            for (int j = 0; j < MapInfo.COLUMN; j++) {
+            for (int j = 0; j < MapInfo.COLUMN_SIZE; j++) {
                 s += map[i][j] + " ";
             }
             System.out.println(s);
